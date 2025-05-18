@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - F5 Escapes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f9;
+            background: linear-gradient(135deg, #daf207, #56ab2f);
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            width: 100%;
+            z-index: 1000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #035e1e;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+            flex: 1;
+        }
+        .sidebar {
+            width: 25%;
+            background: #fff;
+            background: linear-gradient(135deg, #f9fd03, #56ab2f);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar button {
+            padding: 15px 20px;
+            background: #56ab2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .sidebar button:hover {
+            background: #3d8b2d;
+        }
+        .dashboard-container {
+            width: 75%;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            color: #000000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 24px;
+            color: #56ab2f;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #56ab2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #3d8b2d;
+        }
+        .trip-container, .product-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .trip-box, .product-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .trip-box img, .product-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .edit-form {
+            display: none;
+            transition: all 0.3s ease-in-out;
+            margin-top: 10px;
+        }
+        .edit-form.active {
+            display: block;
+        }
+        .trip-details, .product-details {   
+            width: 100%;
+            text-align: center;
+        }
+        .trip-details p, .product-details p {
+            margin: 5px 0;
+        }
+        .nav-toggle {
+            display: none;
+            cursor: pointer;
+        }
+        .nav-toggle div {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 5px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                display: none;
+            }
+            .sidebar.active {
+                display: flex;
+            }
+            .dashboard-container {
+                width: 100%;
+            }
+            .nav-toggle {
+                display: block;
+            }
+        }
+    </style>
+    <script>
+        function switchSection(section) {
+            document.getElementById('add-trip-section').style.display = section === 'add-trip' ? 'block' : 'none';
+            document.getElementById('manage-trip-section').style.display = section === 'manage-trip' ? 'block' : 'none';
+            document.getElementById('add-product-section').style.display = section === 'add-product' ? 'block' : 'none';
+            document.getElementById('manage-product-section').style.display = section === 'manage-product' ? 'block' : 'none';
+        }
+
+        function showEditForm(type, id) {
+            const form = document.getElementById(`edit-form-${type}-${id}`);
+            form.classList.toggle('active');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function calculateDuration() {
+            const startDate = new Date(document.getElementById('start_date').value);
+            const endDate = new Date(document.getElementById('end_date').value);
+            const duration = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            document.getElementById('duration').value = duration;
+        }
+
+        function calculateEditDuration(id) {
+            const startDate = new Date(document.getElementById(`edit_start_date_${id}`).value);
+            const endDate = new Date(document.getElementById(`edit_end_date_${id}`).value);
+            const duration = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            document.getElementById(`edit_duration_${id}`).value = duration;
+        }
+
+        function validateDurationAndDates(id) {
+            const startDate = new Date(document.getElementById(`edit_start_date_${id}`).value);
+            const endDate = new Date(document.getElementById(`edit_end_date_${id}`).value);
+            const duration = document.getElementById(`edit_duration_${id}`).value;
+
+            if (startDate > endDate) {
+                alert("Date invalid!! Start date cannot be after end date.");
+                return false;
+            }
+
+            if (duration < 0) {
+                alert("Duration can't be negative");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-toggle" onclick="toggleSidebar()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('logout') }}"><button>Log Out</button></a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <button onclick="switchSection('add-trip')">Add Trip</button>
+            <button onclick="switchSection('manage-trip')">Manage Trip</button>
+            <button onclick="switchSection('add-product')">Add Product</button>
+            <button onclick="switchSection('manage-product')">Manage Product</button>
+        </div>
+
+        <div class="dashboard-container">
+            <h1>Admin Dashboard</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Add Trips Section -->
+            <div id="add-trip-section" class="section">
+                <h2>Add New Trip</h2>
+                <form action="{{ url_for('admin') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Trip Title</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="place">Place</label>
+                        <input type="text" id="place" name="place" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" id="start_date" name="start_date" required onchange="calculateDuration()">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" id="end_date" name="end_date" required onchange="calculateDuration()">
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration (days)</label>
+                        <input type="number" id="duration" name="duration" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="template_image">Template Image</label>
+                        <input type="file" id="template_image" name="template_image" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="template_details">Template Details</label>
+                        <textarea id="template_details" name="template_details" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="view_trip_media">View Trip Media (Image/Video)</label>
+                        <input type="file" id="view_trip_media" name="view_trip_media" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="view_paragraph">View Paragraph</label>
+                        <textarea id="view_paragraph" name="view_paragraph" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="things_to_do">Things To Do</label>
+                        <textarea id="things_to_do" name="things_to_do" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="gallery">Gallery (Upload 3 Photos)</label>
+                        <input type="file" id="gallery" name="gallery" multiple required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price (₹)</label>
+                        <input type="number" id="price" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="details">Details</label>
+                        <textarea id="details" name="details" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="seat_availability">Seat Availability</label>
+                        <input type="number" id="seat_availability" name="seat_availability" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="points">Points</label>
+                        <input type="number" id="points" name="points" required>
+                    </div>
+                    <button type="submit" name="add_trip">Add Trip</button>
+                </form>
+            </div>
+
+            <!-- Manage Trips Section -->
+            <div id="manage-trip-section" class="section" style="display: none;">
+                <h2>Manage Trips</h2>
+                <div class="trip-container">
+                    {% for trip in trips %}
+                    <div class="trip-box">
+                        <img src="{{ url_for('static', filename=trip['template_image']) }}" alt="{{ trip['title'] }}">
+                        <div class="trip-details">
+                            <p><strong>{{ trip['title'] }}</strong></p>
+                            <p>{{ trip['start_date'] }} to {{ trip['end_date'] }}</p>
+                            <p>Seats: {{ trip['seat_availability'] }}</p>
+                            <button onclick="showEditForm('trip', {{ trip['id'] }})">Edit</button>
+                            <form action="{{ url_for('delete_trip') }}" method="post" style="display:inline;">
+                                <input type="hidden" name="trip_id" value="{{ trip['id'] }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="edit-form-trip-{{ trip['id'] }}" class="edit-form">
+                        <form action="{{ url_for('edit_trip') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateDurationAndDates({{ trip['id'] }})">
+                            <input type="hidden" name="trip_id" value="{{ trip.id }}">
+                            <div>
+                                <label for="edit_title">Title:</label>
+                                <input type="text" id="edit_title" name="edit_title" value="{{ trip.title }}" required>
+                            </div>
+                            <div>
+                                <label for="edit_place">Place:</label>
+                                <input type="text" id="edit_place" name="edit_place" value="{{ trip.place }}" required>
+                            </div>
+                            <div>
+                                <label for="edit_start_date">Start Date:</label>
+                                <input type="date" id="edit_start_date_{{ trip['id'] }}" name="edit_start_date" value="{{ trip.start_date }}" required onchange="calculateEditDuration({{ trip['id'] }})">
+                            </div>
+                            <div>
+                                <label for="edit_end_date">End Date:</label>
+                                <input type="date" id="edit_end_date_{{ trip['id'] }}" name="edit_end_date" value="{{ trip.end_date }}" required onchange="calculateEditDuration({{ trip['id'] }})">
+                            </div>
+                            <div>
+                                <label for="edit_duration">Duration:</label>
+                                <input type="number" id="edit_duration_{{ trip['id'] }}" name="edit_duration" value="{{ trip.duration }}" readonly>
+                            </div>
+                            <div>
+                                <label for="edit_template_image">Template Image:</label>
+                                {% if trip.template_image %}
+                                    <img src="{{ url_for('static', filename=trip.template_image) }}" alt="Template Image" width="100">
+                                {% endif %}
+                                <input type="file" id="edit_template_image" name="edit_template_image">
+                            </div>
+                            <div>
+                                <label for="edit_view_trip_media">View Trip Media:</label>
+                                {% if trip.view_trip_media %}
+                                    <video width="320" height="240" controls>
+                                        <source src="{{ url_for('static', filename=trip.view_trip_media) }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
+                                <input type="file" id="edit_view_trip_media" name="edit_view_trip_media">
+                            </div>
+                            <div>
+                                <label for="edit_gallery">Gallery:</label>
+                                {% if trip.gallery %}
+                                    {% for image in json.loads(trip.gallery) %}
+                                        <img src="{{ url_for('static', filename=image) }}" alt="Gallery Image" width="100">
+                                    {% endfor %}
+                                {% endif %}
+                                <input type="file" id="edit_gallery" name="edit_gallery" multiple>
+                            </div>
+                            <div>
+                                <label for="edit_template_details">Template Details:</label>
+                                <textarea id="edit_template_details" name="edit_template_details">{{ trip.template_details }}</textarea>
+                            </div>
+                            <div>
+                                <label for="edit_view_paragraph">View Paragraph:</label>
+                                <textarea id="edit_view_paragraph" name="edit_view_paragraph">{{ trip.view_paragraph }}</textarea>
+                            </div>
+                            <div>
+                                <label for="edit_things_to_do">Things to Do:</label>
+                                <textarea id="edit_things_to_do" name="edit_things_to_do">{{ trip.things_to_do }}</textarea>
+                            </div>
+                            <div>
+                                <label for="edit_price">Price:</label>
+                                <input type="number" id="edit_price" name="edit_price" value="{{ trip.price }}" required>
+                            </div>
+                            <div>
+                                <label for="edit_details">Details:</label>
+                                <textarea id="edit_details" name="edit_details">{{ trip.details }}</textarea>
+                            </div>
+                            <div>
+                                <label for="edit_seat_availability">Seat Availability:</label>
+                                <input type="number" id="edit_seat_availability" name="edit_seat_availability" value="{{ trip.seat_availability }}" required>
+                            </div>
+                            <div>
+                                <label for="edit_points">Points:</label>
+                                <input type="number" id="edit_points" name="edit_points" value="{{ trip.points }}" required>
+                            </div>
+                            <button type="submit">Update Trip</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Add Products Section -->
+            <div id="add-product-section" class="section" style="display: none;">
+                <h2>Add New Product</h2>
+                <form action="{{ url_for('admin') }}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="product_name">Product Name</label>
+                        <input type="text" id="product_name" name="product_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_image">Product Image</label>
+                        <input type="file" id="product_image" name="product_image" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_details">Details</label>
+                        <textarea id="product_details" name="product_details" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_price">Price</label>
+                        <input type="number" id="product_price" name="product_price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_points">Points</label>
+                        <input type="number" id="product_points" name="product_points" required>
+                    </div>
+                    <button type="submit" name="add_product">Add Product</button>
+                </form>
+            </div>
+
+            <!-- Manage Products Section -->
+            <div id="manage-product-section" class="section" style="display: none;">
+                <h2>Manage Products</h2>
+                <div class="product-container">
+                    {% for product in products %}
+                    <div class="product-box">
+                        <img src="{{ url_for('static', filename=product['image']) }}" alt="{{ product['name'] }}">
+                        <div class="product-details">
+                            <p><strong>{{ product['name'] }}</strong></p>
+                            <p>{{ product['details'] }}</p>
+                            <p>Price: ₹{{ product['price'] }}</p>
+                            <button onclick="showEditForm('product', {{ product['id'] }})">Edit</button>
+                            <form action="{{ url_for('delete_product') }}" method="post" style="display:inline;">
+                                <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="edit-form-product-{{ product['id'] }}" class="edit-form">
+                        <form action="{{ url_for('edit_product') }}" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                            <div class="form-group">
+                                <label for="edit_product_name">Product Name</label>
+                                <input type="text" id="edit_product_name" name="edit_product_name" value="{{ product['name'] }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_product_details">Details</label>
+                                <textarea id="edit_product_details" name="edit_product_details" rows="4" required>{{ product['details'] }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_product_price">Price</label>
+                                <input type="number" id="edit_product_price" name="edit_product_price" value="{{ product['price'] }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_product_image">Product Image</label>
+                                <input type="file" id="edit_product_image" name="edit_product_image">
+                            </div>
+                            <div class="form-group">
+                                <label for="product_points">Points</label>
+                                <input type="number" id="product_points" name="product_points" required>
+                            </div>
+                           
+                            <button type="submit">Update Product</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

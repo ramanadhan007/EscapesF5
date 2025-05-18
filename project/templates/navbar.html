@@ -1,0 +1,124 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home - Brand</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i&amp;display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/fontawesome-all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/baguetteBox.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/vanilla-zoom.min.css') }}">
+    <style>
+        .navbar-nav .nav-link {
+            color: #021407; /* Dark color for text */
+            text-decoration: none; /* Remove underline */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #088512; /* Darker color for hover */
+        }
+
+        .profile-pic {
+            position: relative;
+            display: inline-block;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .profile-pic img {
+            width: 50px; /* Increased size */
+            height: 50px; /* Increased size */
+            border-radius: 50%;
+            border: 5px solid rgb(51, 146, 75);
+            transition: transform 0.3s;
+        }
+
+        .profile-pic img:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-pic .logout-btn {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            color: #088512;
+            border: 1px solid #088512;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .profile-pic .logout-btn:hover {
+            background-color: #088512;
+            color: white;
+        }
+
+        .profile-pic:hover .logout-btn {
+            display: block;
+        }
+
+        .comet, .comet1, .comet2 {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            margin-top: -5px; /* Half of the comet width */
+            margin-left: -5px; /* Half of the comet height */
+        }
+
+        .comet {
+            animation: orbit 5.5s linear infinite;
+        }
+
+        .comet1 {
+            animation: orbit 5.5s linear infinite;
+            animation-delay: 0.5s; /* Delay to create distance between comets */
+        }
+
+        .comet2 {
+            animation: orbit 5.5s linear infinite;
+            animation-delay: 1s; /* Delay to create distance between comets */
+        }
+
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg) translateX(23px) rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg) translateX(23px) rotate(-360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top bg-body clean-navbar" style="box-shadow: 0px 6px 7px, 0px 0px; background-color: #f8f9fa;">
+        <div class="container"><a class="navbar-brand logo" href="#" style="background: url('{{ url_for('static', filename='assets/img/F5 Escapes_Green_2024.png') }}') no-repeat;background-size: contain;padding: 15px 0px;margin: 0px;height: 47px;width: 90.6875px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link d-flex active" href="/homepage"><i class="fas fa-home" style="font-size: 20px;width: 27.5px;height: 25px;"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link d-flex" href="/upcoming"><i class="fas fa-arrow-circle-up" style="font-size: 20px;width: 27.5px;height: 25px;"></i>Upcoming</a></li>
+                    <li class="nav-item"><a class="nav-link d-flex" href="/store"><i class="fas fa-shopping-bag" style="font-size: 20px;width: 27.5px;height: 25px;"></i>Merchandise</a></li>
+                    <li class="nav-item"><a class="nav-link d-flex" href="/profile"><i class="fas fa-user" style="font-size: 20px;width: 27.5px;height: 25px;"></i>Dashboard</a></li>
+                </ul>
+                <div class="profile-pic ms-3">
+                    <img src="{{ url_for('static', filename=profile_image) }}" alt="Profile Image">
+                    <!--<div class="comet"></div>
+                    <div class="comet1"></div>
+                    <div class="comet2"></div>-->
+                    <a class="logout-btn" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/baguetteBox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/vanilla-zoom.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/theme.js') }}"></script>
+</body>

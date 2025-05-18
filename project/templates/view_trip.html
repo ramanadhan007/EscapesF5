@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Details</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #cdd6df;
+            margin: 20px 0;
+            font-size: 2.5em;
+        }
+
+        .media-section {
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .media-section img, .media-section video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .media-overlay h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+
+        .media-overlay p {
+            font-size: 1.5em;
+            margin: 10px 0 0;
+        }
+
+        .details-section {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: 'Georgia', serif;
+        }
+
+        .details-section h2 {
+            color: #ff5722;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .event {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .event p {
+            margin: 5px 0;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .event strong {
+            color: #0b121b;
+        }
+
+        .add-to-wishlist-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-wishlist-button:hover {
+            background-color: #218838;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .gallery img, .gallery video {
+            width: 100%;
+            height: 200px; /* Set a fixed height for gallery items */
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .details-section {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            .media-section {
+                height: 30vh;
+            }
+
+            .media-overlay h1 {
+                font-size: 2em;
+            }
+
+            .media-overlay p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="media-section">
+        {% set first_media = trip.gallery[0] if trip.gallery and trip.gallery|length > 0 else None %}
+        {% if first_media %}
+            {% if first_media.endswith('.jpg') or first_media.endswith('.jpeg') or first_media.endswith('.png') %}
+                <img src="{{ url_for('static', filename=first_media.replace('\\', '/')) }}" alt="Gallery Image">
+            {% elif first_media.endswith('.mp4') or first_media.endswith('.avi') %}
+                <video autoplay muted loop>
+                    <source src="{{ url_for('static', filename=first_media.replace('\\', '/')) }}" type="video/{{ first_media.split('.')[-1] }}">
+                    Your browser does not support the video tag.
+                </video>
+            {% endif %}
+        {% else %}
+            <p>No media available.</p>
+        {% endif %}
+        <div class="media-overlay">
+            <h1>{{ trip.title }}</h1>
+            <p>{{ trip.template_details }}</p>
+        </div>
+    </div>
+
+    <div class="details-section">
+        <h2>Trip Details</h2>
+        <div class="event">
+            <p><strong>Trip Title:</strong> {{ trip.title }}</p>
+            <p><strong>Place:</strong> {{ trip.place }}</p>
+            <p><strong>Start Date:</strong> {{ trip.start_date }}</p>
+            <p><strong>End Date:</strong> {{ trip.end_date }}</p>
+            <p><strong>Duration:</strong> {{ trip.duration }} days</p>
+            <p><strong>Template Details:</strong> {{ trip.template_details }}</p>
+            <p><strong>View Paragraph:</strong> {{ trip.view_paragraph }}</p>
+            <p><strong>Things To Do:</strong> {{ trip.things_to_do }}</p>
+            <p><strong>Price:</strong> ₹{{ trip.price }}</p>
+            <p><strong>Details:</strong> {{ trip.details }}</p>
+            <p><strong>Seat Availability:</strong> {{ trip.seat_availability }}</p>
+
+            <form action="{{ url_for('add_to_wishlist') }}" method="POST">
+                <input type="hidden" name="trip_id" value="{{ trip.id }}">
+                <button type="submit" class="add-to-wishlist-button">Add to Wishlist</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="details-section">
+        <h2>Gallery</h2>
+        <div class="gallery">
+            {% for media in trip.gallery[1:] %}
+                {% if media.endswith('.jpg') or media.endswith('.jpeg') or media.endswith('.png') %}
+                    <img src="{{ url_for('static', filename=media.replace('\\', '/')) }}" alt="Gallery Image">
+                {% elif media.endswith('.mp4') or media.endswith('.avi') %}
+                    <video controls>
+                        <source src="{{ url_for('static', filename=media.replace('\\', '/')) }}" type="video/{{ media.split('.')[-1] }}">
+                        Your browser does not support the video tag.
+                    </video>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wishlistButtons = document.querySelectorAll('.add-to-wishlist-button');
+            wishlistButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    alert('Trip added to your wishlist!');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

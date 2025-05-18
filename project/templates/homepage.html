@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage - F5 Escapes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bahnschrift:wght@600&display=swap'); /* Bahnschrift SemiBold font */
+
+        body {
+            font-family: 'Bahnschrift', sans-serif; /* Use Bahnschrift SemiBold font */
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background: black; /* Fallback color */
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #007BFF; /* Navbar background color */
+            border: none; /* Remove any border */
+        }
+       
+        .content {
+            position: relative;
+            z-index: 1; /* Ensure content appears above video */
+            padding: 60px;
+            margin: 30px;
+            text-align: center;
+            color: #fdfdfd; /* Content text color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 75vh; /* Full height of the viewport */
+        }
+        h1 {
+            font-size: 50px; /* Font size for h1 */
+            font-weight: bolder;
+            font-family: 'Bahnschrift', sans-serif; /* Formal text font */
+        }
+        p {
+            font-size: 22px; /* Font size for paragraph */
+            color: #ffffff; /* Paragraph text color */
+            margin-top: 60px; /* Margin top for paragraph */
+        }
+        .plan-button {
+            display: inline-block;
+            margin-top: 20px; /* Margin top for button */
+            padding: 15px 30px; /* Padding for button */
+            font-size: 20px;
+            color: #ffffff; /* Button text color */
+            background-color: #04350eb6; /* Button background color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Add transition for hover effects */
+        }
+        .plan-button:hover {
+            background-color: #00040585; /* Button hover background color */
+            color: #ffffff; /* Button hover text color */
+        }
+        .yellow-bar {
+            width: 100%;
+            height: 10px;
+            background-color: rgb(252, 243, 5);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.336);
+            position: relative;
+            z-index: 1; /* Ensure the yellow bar is above the video */
+        }
+        .public-reviews {
+            padding: 15px;
+            background-color: rgba(250, 250, 250, 0.969); /* Reviews background color */
+            border-radius: 0px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            color: #070404; /* Reviews text color */
+            z-index: 1; /* Ensure reviews appear above video */
+        }
+        .carousel-item {
+            text-align: center;
+        }
+        .card {
+            margin: 0 auto;
+            max-width: 100%;
+            overflow: hidden; /* Hide overflow content */
+            margin-bottom: 10px; /* Space between cards */
+            background-color: #f0f0f0; /* Card body background color - light gray */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover effects */
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Move the card up on hover */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            color: #000000; /* Review text color - black */
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .review-header img {
+            margin-right: 10px;
+        }
+        .card-title {
+            font-weight: bold;
+            margin: 0;
+        }
+        .review-footer {
+            position: absolute;
+            top: 5px;
+            right: 40px;
+            text-align: right;
+        }
+        .rounded-circle {
+            object-fit: cover;
+        }
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Ensure video is behind content */
+            overflow: hidden;
+        }
+        .background-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensure the video covers the background */
+            position: fixed;
+            top: -30px;
+            left: 0;
+        }
+        .review-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: #000000; /* Review text color - black */
+            font-style: italic; /* Italics for reviews */
+        }
+        .see-more {
+            color: #007BFF;
+            cursor: pointer;
+        }
+        .see-more:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .navbar ul {
+                flex-direction: column;
+            }
+            .navbar ul li {
+                margin: 5px 0;
+            }
+            h1 {
+                font-size: 28px; /* Font size for h1 on small screens */
+            }
+            p {
+                font-size: 16px; /* Font size for paragraph on small screens */
+            }
+            .plan-button {
+                font-size: 18px; /* Font size for button on small screens */
+                padding: 10px 20px; /* Padding for button on small screens */
+            }
+        }
+        footer {
+            background-color: #000000; /* Footer background color */
+            color: #ffffff; /* Footer text color */
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            z-index: 2; /* Ensure footer is above other content */
+        }
+
+        /* New CSS for date and time */
+        .date-time {
+            position: fixed;
+            top: 120px;
+            right: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 1000; /* Ensure it stays above other elements */
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .date-time i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        {% include 'navbar.html' %}
+    </div>
+
+    <!-- Background Video -->
+    <div class="background-video">
+        <video autoplay muted loop>
+            <source src="{{ url_for('static', filename='uploads/wave.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Date and Time Display -->
+    <div class="date-time" id="dateTime">
+        <i class="fas fa-clock"></i>
+        <!-- The date and time will be dynamically inserted here by JavaScript -->
+    </div>
+
+    <div class="content">
+        <h1 id="greeting">Welcome to F5 Escapes</h1>
+        <p>Your gateway to memorable travel experiences.</p>
+        <a href="/upcoming" class="plan-button">
+            <i class="fas fa-suitcase"></i> Plan Your Journey
+        </a>
+    </div>
+    
+    <!-- Yellow Bar -->
+    <div class="yellow-bar"></div>
+
+    <div class="public-reviews">
+        <h2>Customer Reviews</h2>
+        <div id="reviewsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for review in reviews %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="review-header">
+                                <img src="{{ url_for('static', filename=review.profile_image) }}" 
+                                     class="rounded-circle" alt="User Image" width="50" height="50">
+                                <h5 class="card-title">{{ review.username }}</h5>
+                            </div>
+                            <p class="card-text review-text">{{ review.review }}</p>
+                            <span class="see-more">See more</span>
+                            <div class="review-footer">
+                                <p class="card-text"><small class="text-muted">{{ review.trip_title }} - {{ review.trip_start_date }}</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 F5 Escapes. All rights reserved.
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to get the greeting message based on the current time and username
+        const getGreetingMessage = (userName) => {
+            const hours = new Date().getHours();
+            if (hours < 12) {
+                return `Good Morning, ${userName}`;
+            } else if (hours < 18) {
+                return `Good Afternoon, ${userName}`;
+            } else {
+                return `Good Evening, ${userName}`;
+            }
+        };
+
+        // Fetch the username from the server and update the greeting message
+        fetch('/get_username')
+            .then(response => response.json())
+            .then(data => {
+                const greetingMessage = getGreetingMessage(data.username);
+                document.getElementById('greeting').innerText = greetingMessage;
+            })
+            .catch(error => console.error('Error fetching username:', error));
+
+        var myCarousel = document.querySelector('#reviewsCarousel')
+        var carousel = new bootstrap.Carousel(myCarousel, {
+            interval: 10000,  // 10 seconds
+            ride: 'carousel'
+        })
+
+        // Make the video move up and down while scrolling
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            document.querySelector('.background-video video').style.transform = `translateY(${scrollPosition * 0.5}px)`;
+        });
+
+        // See more functionality
+        document.querySelectorAll('.see-more').forEach(function(seeMore) {
+            seeMore.addEventListener('click', function() {
+                const reviewText = seeMore.previousElementSibling;
+                reviewText.style.display = 'block';
+                reviewText.style.webkitLineClamp = 'unset';
+                seeMore.style.display = 'none';
+            });
+        });
+
+        // Function to format the date and time
+        function formatDateTime(date) {
+            const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const optionsDate = { day: 'numeric', month: 'short' };
+            const timeString = date.toLocaleTimeString([], optionsTime).toUpperCase();
+            const dateString = date.toLocaleDateString([], optionsDate).replace(/\s/g, '-');
+            return `${timeString}\n${dateString}`;
+        }
+
+        // Update date and time every second
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = formatDateTime(now);
+            document.getElementById('dateTime').innerHTML = `<i class="fas fa-clock"></i> ${dateTimeString}`;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Initial call to display the date and time immediately
+    </script>
+</body>
+</html>
